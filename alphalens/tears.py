@@ -277,20 +277,21 @@ def create_returns_tear_sheet(
 
     # Compute cumulative returns from daily simple returns, if '1D'
     # returns are provided.
-    if "1D" in factor_returns:
+    # if "1D" in factor_returns:
+    for d in factor_returns:
         title = (
             "Factor Weighted "
             + ("Group Neutral " if group_neutral else "")
             + ("Long/Short " if long_short else "")
-            + "Portfolio Cumulative Return (1D Period)"
+            + "Portfolio Cumulative Return (" + d + " Period)"
         )
 
         plotting.plot_cumulative_returns(
-            factor_returns["1D"], period="1D", title=title, ax=gf.next_row()
+            factor_returns[d], period=d, title=title, ax=gf.next_row()
         )
 
         plotting.plot_cumulative_returns_by_quantile(
-            mean_quant_ret_bydate["1D"], period="1D", ax=gf.next_row()
+            mean_quant_ret_bydate[d], period=d, ax=gf.next_row()
         )
 
     ax_mean_quantile_returns_spread_ts = [
@@ -431,7 +432,7 @@ def create_turnover_tear_sheet(factor_data, turnover_periods=None):
     if turnover_periods is None:
         input_periods = utils.get_forward_returns_columns(
             factor_data.columns, require_exact_day_multiple=True,
-        ).get_values()
+        ).to_numpy()
         turnover_periods = utils.timedelta_strings_to_integers(input_periods)
     else:
         turnover_periods = utils.timedelta_strings_to_integers(
